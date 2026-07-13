@@ -1,0 +1,32 @@
+{
+  "backend/alembic/env.py": {
+    "mtime": 1783841529.6111498,
+    "ast_hash": "cdfd54e3511a13184c847107cfd5f01e",
+    "semantic_hash": "cdfd54e3511a13184c847107cfd5f01e"
+  },
+  "backend/app/__init__.py": {
+    "mtime": 1783758315.6009803,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "backend/app/database.py": {
+    "mtime": 1783766161.9872813,
+    "ast_hash": "4d63257513e79cb6098a59a198ff2df5",
+    "semantic_hash": "4d63257513e79cb6098a59a198ff2df5"
+  },
+  "backend/app/main.py": {
+    "mtime": 1783767206.016853,
+    "ast_hash": "96539156f76667744f3658adcffe98e5",
+    "semantic_hash": "96539156f76667744f3658adcffe98e5"
+  },
+  "backend/requirements.txt": {
+    "mtime": 1783767629.9967232,
+    "ast_hash": "4b767962b46289e9ddc18b06ad173b2b",
+    "semantic_hash": "4b767962b46289e9ddc18b06ad173b2b"
+  },
+  "compose.yaml": {
+    "mtime": 1783840918.5887997,
+    "ast_hash": "c45b2f66212f52fa67377140f7b35fa8",
+    "semantic_hash": "c45b2f66212f52fa67377140f7b35fa8"
+  }
+}

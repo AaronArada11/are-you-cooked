@@ -1,0 +1,1 @@
+{"0": "Backend Runtime", "1": "Alembic Migration Runtime", "2": "Database Session Layer", "3": "PostgreSQL Container Stack", "4": "FastAPI Routes and Health", "5": "Persistence Dependencies", "6": "Application Package Marker"}
