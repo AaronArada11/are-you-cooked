@@ -1,0 +1,43 @@
+# Git
+.git
+.gitignore
+
+# Python
+backend/venv
+backend/.venv
+backend/__pycache__
+backend/.pytest_cache
+backend/.mypy_cache
+backend/.ruff_cache
+*.pyc
+
+# Node
+frontend/node_modules
+frontend/.next
+frontend/dist
+frontend/build
+
+# Environment variables
+**/.env
+**/.env.*
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+coverage
+
+# Documentation
+docs
+
+# Misc
+*.sqlite
+*.db
