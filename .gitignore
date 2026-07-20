@@ -4,6 +4,7 @@ env/
 .env
 __pycache__/
 *.py[cod]
+.DS_Store
 
 # Graphify runtime files
 graphify-out/.graphify_learning.json
