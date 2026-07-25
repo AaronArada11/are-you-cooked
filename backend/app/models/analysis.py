@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from typing import Optional
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Uuid, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -56,3 +56,8 @@ class Analysis(Base):
     DateTime(timezone=True)
     )
 
+    profile = relationship(
+        "Profile",
+        back_populates="analyses",
+
+    )
