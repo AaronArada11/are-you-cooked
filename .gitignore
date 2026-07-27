@@ -7,6 +7,7 @@ __pycache__/
 .DS_Store
 
 # Graphify runtime files
+graphify-out/
 graphify-out/.graphify_learning.json
 graphify-out/.vocab.txt
 graphify-out/memory/
