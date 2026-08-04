@@ -4,8 +4,10 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.database import get_db_session
+from app.routers.analyses import router as analyses_router
 
 app = FastAPI()
+app.include_router(analyses_router)
 
 
 @app.get("/")
