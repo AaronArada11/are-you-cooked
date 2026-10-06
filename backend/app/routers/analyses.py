@@ -24,23 +24,23 @@ def create_analysis(
     payload: AnalysisCreate,
     db: Session = Depends(get_db_session),
 ):
-    profile = db.get(Profile, payload.profile_id)
+    try:
+        profile = db.get(Profile, payload.profile_id)
 
-    if profile is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Profile not found",
+        if profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found",
+            )
+
+        new_analysis = Analysis(
+            profile=profile,
+            status="queued",
+            job_title=payload.job_title,
+            company=payload.company,
+            job_description=payload.job_description,
         )
 
-    new_analysis = Analysis(
-        profile=profile,
-        status="queued",
-        job_title=payload.job_title,
-        company=payload.company,
-        job_description=payload.job_description,
-    )
-
-    try:
         db.add(new_analysis)
         db.commit()
         db.refresh(new_analysis)
@@ -62,7 +62,14 @@ def get_analysis(
     analysis_id: UUID,
     db: Session = Depends(get_db_session),
 ):
-    analysis = db.get(Analysis, analysis_id)
+    try:
+        analysis = db.get(Analysis, analysis_id)
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not retrieve analysis",
+        ) from error
 
     if analysis is None:
         raise HTTPException(
