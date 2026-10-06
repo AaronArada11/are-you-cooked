@@ -14,7 +14,8 @@ database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise RuntimeError("DATABASE_URL is required to run migrations")
 
-config.set_main_option("sqlalchemy.url", database_url)
+# ConfigParser treats percent signs in URL-encoded credentials as interpolation.
+config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
