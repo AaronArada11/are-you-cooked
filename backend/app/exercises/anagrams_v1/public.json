@@ -1,0 +1,39 @@
+{
+  "exercise_id": "anagram-groups",
+  "exercise_version": 1,
+  "title": "Find Anagram Groups",
+  "language": "python",
+  "statement": "Given exactly five strings, return all groups containing at least two strings that are anagrams of one another. Two strings are anagrams when they contain the same letters with the same frequencies, regardless of order.",
+  "requirements": [
+    "Implement find_anagrams(words: list[str]) -> list[list[str]].",
+    "Exclude strings that have no anagram in the input.",
+    "Preserve input order within each group.",
+    "Order groups by where their first member appears in the input.",
+    "Return an empty list if no anagrams exist.",
+    "Do not modify the input."
+  ],
+  "constraints": [
+    "The input contains exactly five distinct strings.",
+    "Each string contains between 1 and 100 characters.",
+    "Strings contain only lowercase English letters a-z.",
+    "You may assume the input satisfies these constraints."
+  ],
+  "examples": [
+    {
+      "input": ["listen", "silent", "enlist", "hello", "world"],
+      "output": [["listen", "silent", "enlist"]],
+      "explanation": "The first three strings contain the same letters with the same frequencies."
+    },
+    {
+      "input": ["eat", "tea", "tan", "ate", "nat"],
+      "output": [["eat", "tea", "ate"], ["tan", "nat"]],
+      "explanation": "There are two anagram groups, ordered by their first appearance."
+    },
+    {
+      "input": ["aab", "abb", "cat", "dog", "sun"],
+      "output": [],
+      "explanation": "No strings are anagrams. In particular, aab and abb have different letter frequencies."
+    }
+  ],
+  "starter_code": "def find_anagrams(words: list[str]) -> list[list[str]]:\n    # Write your solution here.\n    pass\n"
+}

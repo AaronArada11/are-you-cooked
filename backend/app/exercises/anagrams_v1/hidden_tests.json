@@ -1,0 +1,32 @@
+[
+  {
+    "id": "all_five_anagrams",
+    "words": ["abc", "acb", "bac", "bca", "cab"],
+    "expected": [["abc", "acb", "bac", "bca", "cab"]]
+  },
+  {
+    "id": "interleaved_groups",
+    "words": ["rat", "evil", "tar", "vile", "art"],
+    "expected": [["rat", "tar", "art"], ["evil", "vile"]]
+  },
+  {
+    "id": "different_letter_frequencies",
+    "words": ["aabb", "abbb", "bbaa", "bbba", "abcd"],
+    "expected": [["aabb", "bbaa"], ["abbb", "bbba"]]
+  },
+  {
+    "id": "different_lengths",
+    "words": ["ab", "aab", "ba", "aba", "aaaa"],
+    "expected": [["ab", "ba"], ["aab", "aba"]]
+  },
+  {
+    "id": "single_character_strings",
+    "words": ["a", "b", "c", "d", "e"],
+    "expected": []
+  },
+  {
+    "id": "unmatched_word_first",
+    "words": ["solo", "tea", "eat", "dog", "god"],
+    "expected": [["tea", "eat"], ["dog", "god"]]
+  }
+]
