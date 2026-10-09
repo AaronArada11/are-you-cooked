@@ -3,9 +3,9 @@
 An AI technical interviewer for programming interview practice. The intended
 experience is described in [AGENTS.md](AGENTS.md).
 
-**Status as of October 6, 2026: backend foundation only.** There is no usable
-interview session or AI integration yet. The last feature commit before this
-review was `45a77cc` (August 4, 2026), adding analysis creation and retrieval.
+**Status as of October 9, 2026: backend session recording is implemented.**
+Sessions follow enforced states and retain a timestamped in-memory event record.
+There is no frontend, execution sandbox, or AI integration yet.
 The existing profile/analysis schema contains job-matching and ATS fields from
 earlier work; those are not an implementation of the current interviewer goal.
 
@@ -66,8 +66,8 @@ Use the returned `id` with `GET /analyses/{analysis_id}`. This checks record
 storage only; it does not perform an interview or generate feedback.
 
 `docker compose down` stops the app. Records survive container restarts in the
-`postgres_data` volume. Removing that volume deletes the records. No interview
-messages, code submissions, or voice recordings are collected yet.
+`postgres_data` volume. Removing that volume deletes the records. Interview messages and code are stored separately in process memory and are lost
+on restart or development reload. Voice is not collected.
 
 ## Architecture
 
@@ -118,14 +118,12 @@ setup instructions and the regression suite.
 
 ## Next milestone, following AGENTS.md
 
-None of the end-to-end interview milestone is complete yet:
+The full end-to-end interview milestone remains incomplete:
 
-1. Author one original Python algorithm exercise with requirements, examples,
+1. Implemented: Author one original Python algorithm exercise with requirements, examples,
    constraints, reference solution, and verified tests.
-2. Add the `introduction → solving → submitted → feedback → ended` state machine,
-   enforcing transitions in code. Store timestamped messages, meaningful code
-   snapshots, hints, test runs, submission, and the problem version. Start with a
-   clear local/in-memory persistence boundary.
+2. Implemented: enforced session state machine and in-memory event record,
+   described below. Actual hint delivery, execution, and assessment remain pending.
 3. Build a small code editor and text conversation. Add an interviewer that asks
    one focused question at a time and keeps hidden tests/reference answers private.
 4. Configure a dedicated execution sandbox with resource/output limits, no network,
@@ -142,3 +140,61 @@ None of the end-to-end interview milestone is complete yet:
 After that: voice transcription with correction, more curated exercises, and
 session replay. Durable interview storage and accounts follow when those workflows
 need them; adaptive difficulty and live voice come later.
+
+## Session recording API
+
+Use `/docs` or these requests to try the local recording flow:
+
+```sh
+curl http://localhost:8000/exercises/anagram-groups
+curl -X POST http://localhost:8000/sessions -H 'Content-Type: application/json' -d '{}'
+```
+
+Use the returned UUID as `SESSION_ID`. `GET /sessions/SESSION_ID` returns the
+current state, pinned exercise ID/version, and full event record. Send actions to
+`POST /sessions/SESSION_ID/events` as JSON:
+
+| State | Action body | Result |
+| --- | --- | --- |
+| introduction | `{"kind":"message","text":"Are inputs lowercase?"}` | Record candidate message |
+| introduction | `{"kind":"start"}` | Move to solving |
+| solving | `{"kind":"message","text":"I will group sorted letters."}` | Record explanation |
+| solving | `{"kind":"snapshot","code":"# work in progress"}` | Explicit meaningful checkpoint |
+| solving | `{"kind":"hint","text":"How should I start?"}` | Record request; delivery unavailable |
+| solving | `{"kind":"test_run","code":"# current code"}` | Snapshot and unavailable execution result |
+| solving | `{"kind":"submit","code":"# final or incomplete code"}` | Snapshot, submission, move to submitted |
+| submitted | `{"kind":"feedback"}` | Record unavailable assessment, move to feedback |
+| feedback | `{"kind":"end"}` | Move to ended |
+
+The only state sequence is `introduction → solving → submitted → feedback → ended`.
+Skipping, repeating, or reversing a transition returns 409 without changing the
+record. Ended sessions are read-only. Invalid action bodies return 422 and missing
+sessions/exercises return 404. Empty code is allowed for incomplete attempts.
+
+Recording starts at session creation: the server assigns UTC timestamps and UUIDs
+and retains messages, requested hints, explicit code checkpoints, test attempts,
+submission, feedback availability, and transitions. Test and submission events
+reference their exact code snapshot IDs. No per-keystroke recording is needed.
+Requests cannot supply event IDs, timestamps, interviewer roles, or test outcomes.
+Only the public exercise specification is exposed.
+
+`app/sessions.py:MemorySessionStore` is the persistence boundary; the session
+router uses one instance. Mutations are locked, and returned records are deep
+copies. There are no session database writes or migrations. Legacy PostgreSQL
+analysis records are untouched. **All interview records disappear on process
+restart/reload. Run one worker only.** Storage has no eviction and no account
+isolation; this is for local synthetic practice, not shared deployment. Replace
+this repository boundary with durable storage when replay/accounts require it.
+
+Hint requests are not delivered hints. Test attempts always report `unavailable`:
+no candidate code is executed, even if it looks safe. Feedback similarly reports
+`unavailable`, not a grade or an AI review. These explicit placeholders allow the
+recording lifecycle to be exercised without fabricating evidence. Future trusted
+interviewer, sandbox, and evaluator integrations must supply validated results.
+
+Run the session checks without Docker or PostgreSQL (with dev dependencies installed):
+
+```sh
+PYTHONPATH=backend python backend/tests/test_sessions.py
+```
+

@@ -2,14 +2,14 @@ from pydantic import BaseModel, Field
 
 
 class ExerciseExample(BaseModel):
-    words: list[str]
-    expected: list[list[str]]
+    words: list[str] = Field(validation_alias='input')
+    expected: list[list[str]] = Field(validation_alias='output')
     explanation: str
 
 
 class ExerciseResponse(BaseModel):
-    id: str
-    version: int = Field(ge=1)
+    id: str = Field(validation_alias='exercise_id')
+    version: int = Field(ge=1, validation_alias='exercise_version')
     title: str
     language: str
     statement: str

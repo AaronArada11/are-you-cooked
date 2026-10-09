@@ -5,9 +5,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.database import get_db_session
 from app.routers.analyses import router as analyses_router
+from app.routers.exercises import router as exercises_router
+from app.routers.sessions import router as sessions_router
 
 app = FastAPI()
 app.include_router(analyses_router)
+app.include_router(exercises_router)
+app.include_router(sessions_router)
 
 
 @app.get("/")
