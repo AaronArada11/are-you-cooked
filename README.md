@@ -3,9 +3,11 @@
 An AI technical interviewer for programming interview practice. The intended
 experience is described in [AGENTS.md](AGENTS.md).
 
-**Status as of October 9, 2026: backend session recording is implemented.**
-Sessions follow enforced states and retain a timestamped in-memory event record.
-There is no frontend, execution sandbox, or AI integration yet.
+**Status as of October 10, 2026: session recording and the interview frontend are implemented.**
+The Next.js/Tailwind/shadcn interface includes a start screen, responsive coding
+workspace, evidence-linked session summary, and six steak mascot previews based
+on the supplied reference. Sessions retain a timestamped in-memory event record.
+Execution, AI interviewing, AI evaluation, and voice are not implemented.
 The existing profile/analysis schema contains job-matching and ATS fields from
 earlier work; those are not an implementation of the current interviewer goal.
 
@@ -23,8 +25,8 @@ earlier work; those are not an implementation of the current interviewer goal.
 - Regression tests using an isolated, disposable PostgreSQL database.
 
 An analysis stays `queued`: no worker or AI service processes it. There is no
-profile creation API, authentication, frontend, or file upload. The `frontend/`
-directory is empty. API identity comes from a caller-supplied profile UUID;
+profile creation API, authentication, or file upload. The `frontend/`
+directory contains the interview interface. API identity comes from a caller-supplied profile UUID;
 this is a local development scaffold, not a multi-user deployment.
 
 ## Run locally
@@ -68,6 +70,28 @@ storage only; it does not perform an interview or generate feedback.
 `docker compose down` stops the app. Records survive container restarts in the
 `postgres_data` volume. Removing that volume deletes the records. Interview messages and code are stored separately in process memory and are lost
 on restart or development reload. Voice is not collected.
+
+## Frontend
+
+With Node 22.18+ and the backend running:
+
+```sh
+cd frontend
+npm ci
+npm run dev -- --hostname 127.0.0.1
+```
+
+Open [the interview app](http://127.0.0.1:3000). Explore workspace works offline;
+Start Interview records a real session through the backend. Code and messages
+stay in this browser window until recorded or downloaded. Reloading loses the
+local draft and session selection. Backend restarts erase session records.
+
+The frontend proxies only session routes to `INTERVIEW_API_URL` (default
+`http://127.0.0.1:8000`). It imports only the versioned public exercise JSON.
+Doneness is a clearly labeled visual preview until validated performance
+assessment exists. See [frontend setup and checks](frontend/README.md) and
+[design decisions](DESIGN.md). No legacy database records or backend behavior
+were changed for this interface.
 
 ## Architecture
 
@@ -124,7 +148,8 @@ The full end-to-end interview milestone remains incomplete:
    constraints, reference solution, and verified tests.
 2. Implemented: enforced session state machine and in-memory event record,
    described below. Actual hint delivery, execution, and assessment remain pending.
-3. Build a small code editor and text conversation. Add an interviewer that asks
+3. Implemented: a small code editor, written explanation recording, and factual
+   session review. Still pending: an interviewer that asks
    one focused question at a time and keeps hidden tests/reference answers private.
 4. Configure a dedicated execution sandbox with resource/output limits, no network,
    and no host files or secrets. The backend Docker container in this repo is
